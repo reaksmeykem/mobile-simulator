@@ -1,0 +1,3 @@
+@echo off
+echo Opening Mobile Simulator Setup Guide...
+start START-HERE.html

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mobile Simulator - Setup Instructions</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #fbbf24;
+      margin-top: 30px;
+      font-size: 24px;
+    }
+    .step {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      border-left: 4px solid #10b981;
+    }
+    .step-number {
+      background: #10b981;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    .warning {
+      background: rgba(239, 68, 68, 0.2);
+      border: 2px solid #ef4444;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 2px solid #10b981;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    ul {
+      margin: 10px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📱 Mobile Simulator Setup</h1>
+    <p>Follow these steps to complete the installation of your Chrome extension.</p>
+
+    <h2>🎨 Step 1: Generate Icons</h2>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Open the icon generator:</strong>
+      <ul>
+        <li>Open <code>create-icons.html</code> in your browser</li>
+        <li>You'll see three icon previews (16×16, 48×48, 128×128)</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Download the icons:</strong>
+      <ul>
+        <li>Click the "Download All Icons" button</li>
+        <li>Three PNG files will be downloaded: <code>icon16.png</code>, <code>icon48.png</code>, <code>icon128.png</code></li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Save to icons folder:</strong>
+      <ul>
+        <li>Move the downloaded files to <code>mobile-simulator/icons/</code></li>
+        <li>Make sure the filenames match exactly: <code>icon16.png</code>, <code>icon48.png</code>, <code>icon128.png</code></li>
+      </ul>
+    </div>
+
+    <h2>🔧 Step 2: Load Extension in Chrome</h2>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Open Chrome Extensions:</strong>
+      <ul>
+        <li>Navigate to <code>chrome://extensions/</code></li>
+        <li>Or click the puzzle icon → "Manage Extensions"</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Enable Developer Mode:</strong>
+      <ul>
+        <li>Toggle "Developer mode" in the top right corner</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Load the extension:</strong>
+      <ul>
+        <li>Click "Load unpacked"</li>
+        <li>Select the <code>mobile-simulator</code> folder</li>
+        <li>The extension should now appear in your toolbar!</li>
+      </ul>
+    </div>
+
+    <h2>✅ Step 3: Test It Out</h2>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Open a website:</strong>
+      <ul>
+        <li>Navigate to any regular website (e.g., <a href="https://www.google.com" target="_blank">google.com</a>)</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Click the extension icon:</strong>
+      <ul>
+        <li>Click the 📱 Mobile Simulator icon in your toolbar</li>
+        <li>Select a device from the dropdown (e.g., "iPhone 17 Pro")</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Enjoy the simulator:</strong>
+      <ul>
+        <li>The page will display in a realistic mobile mockup</li>
+        <li>Try rotating, toggling the frame, or switching devices</li>
+      </ul>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ Important:</strong> The extension only works on regular websites. It won't work on:
+      <ul>
+        <li><code>chrome://</code> pages</li>
+        <li><code>chrome-extension://</code> pages</li>
+        <li><code>edge://</code> or <code>about:</code> pages</li>
+      </ul>
+    </div>
+
+    <div class="success">
+      <strong>🎉 Features:</strong>
+      <ul>
+        <li>16 different devices (iPhone, Samsung, Pixel, iPad)</li>
+        <li>Realistic device mockups with notch/punch-hole cameras</li>
+        <li>Rotate between portrait and landscape</li>
+        <li>Toggle device frame on/off</li>
+        <li>Organized device selector by category</li>
+      </ul>
+    </div>
+
+    <h2>🔄 After Making Changes</h2>
+    <p>If you modify the code:</p>
+    <ol>
+      <li>Go to <code>chrome://extensions/</code></li>
+      <li>Click the reload icon (🔄) on Mobile Simulator</li>
+      <li>Refresh your test webpage</li>
+    </ol>
+
+    <h2>📚 Need Help?</h2>
+    <p>Check the <code>README.md</code> file for detailed documentation and troubleshooting tips.</p>
+  </div>
+</body>
+</html>

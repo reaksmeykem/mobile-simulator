@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mobile Simulator - Start Here</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #1a1a1a;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    .error-box {
+      background: #fee;
+      border: 2px solid #ef4444;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .error-box h2 {
+      color: #dc2626;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .method {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .method:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+    .method h3 {
+      color: #3b82f6;
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+    .badge {
+      display: inline-block;
+      background: #10b981;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    .badge.auto { background: #f59e0b; }
+    .steps {
+      margin: 15px 0;
+      padding-left: 20px;
+    }
+    .steps li {
+      margin: 8px 0;
+      color: #374151;
+    }
+    .btn {
+      display: inline-block;
+      background: #3b82f6;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 15px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .btn.secondary {
+      background: #6b7280;
+    }
+    .btn.secondary:hover {
+      background: #4b5563;
+    }
+    code {
+      background: #e5e7eb;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .success-box {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    .success-box h3 {
+      color: #065f46;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>📱 Mobile Simulator Setup</h1>
+      <p class="subtitle">Chrome Extension for Testing Responsive Designs</p>
+      
+      <div class="error-box">
+        <h2>⚠️ Icon Error Fix Required</h2>
+        <p>The extension needs PNG icon files to load in Chrome. Choose one method below to generate them.</p>
+      </div>
+
+      <div class="method">
+        <h3>⚡ Method 1: Auto-Download <span class="badge">EASIEST</span></h3>
+        <p>Icons will automatically download when you open the generator page.</p>
+        <ol class="steps">
+          <li>Click the button below to open the auto-generator</li>
+          <li>Wait 1 second - 3 PNG files will download automatically</li>
+          <li>Move the files to <code>mobile-simulator/icons/</code> folder</li>
+          <li>Go to Chrome and click "Retry" on the extension</li>
+        </ol>
+        <a href="generate-icons-simple.html" class="btn" target="_blank">🚀 Auto-Generate Icons</a>
+      </div>
+
+      <div class="method">
+        <h3>🎨 Method 2: Manual Download</h3>
+        <p>Download icons one-by-one or all at once with a nice UI.</p>
+        <ol class="steps">
+          <li>Click the button below to open the icon creator</li>
+          <li>Click "Download All Icons" button</li>
+          <li>Save all 3 PNG files to <code>mobile-simulator/icons/</code> folder</li>
+          <li>Go to Chrome and click "Retry" on the extension</li>
+        </ol>
+        <a href="create-icons.html" class="btn secondary" target="_blank">🎨 Open Icon Creator</a>
+      </div>
+
+      <div class="method">
+        <h3>🐍 Method 3: Python Script <span class="badge auto">AUTOMATIC</span></h3>
+        <p>Icons are automatically saved to the correct folder (requires Python).</p>
+        <ol class="steps">
+          <li><strong>Windows:</strong> Double-click <code>generate-icons.bat</code></li>
+          <li><strong>Mac/Linux:</strong> Run <code>python3 generate_icons.py</code></li>
+          <li>Icons are created in the correct location automatically</li>
+          <li>Go to Chrome and click "Retry" on the extension</li>
+        </ol>
+        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+          Note: Requires Python and Pillow library (script will install if needed)
+        </p>
+      </div>
+
+      <div class="success-box">
+        <h3>✅ After Generating Icons</h3>
+        <ol class="steps">
+          <li>Go to <code>chrome://extensions/</code></li>
+          <li>Find "Mobile Simulator" extension</li>
+          <li>Click the "Retry" button in the error dialog</li>
+          <li>Extension should now load successfully!</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom: 20px;">📚 Additional Resources</h2>
+      <ul class="steps">
+        <li><a href="FIX-ICON-ERROR.md" style="color: #3b82f6;">FIX-ICON-ERROR.md</a> - Detailed troubleshooting guide</li>
+        <li><a href="QUICK-START.md" style="color: #3b82f6;">QUICK-START.md</a> - Quick reference guide</li>
+        <li><a href="README.md" style="color: #3b82f6;">README.md</a> - Full documentation</li>
+        <li><a href="instructions.html" style="color: #3b82f6;">instructions.html</a> - Complete setup instructions</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
