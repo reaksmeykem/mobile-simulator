@@ -2,14 +2,20 @@
   "manifest_version": 3,
   "name": "Mobile Simulator",
   "version": "1.0.0",
-  "description": "Simulate mobile devices and test responsive designs",
+  "description": "Simulate mobile devices and test responsive designs with realistic device mockups",
+  "author": "Your Name",
   "permissions": [
     "activeTab",
     "scripting",
     "storage"
   ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "action": {
     "default_popup": "popup.html",
+    "default_title": "Mobile Simulator",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -20,5 +26,8 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 }

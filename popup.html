@@ -1,71 +1,52 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <script defer src="lib/alpine.min.js"></script>
 </head>
 <body>
-  <div class="popup" x-data="mobileSimulator()" x-init="init()">
+  <div class="popup" id="app">
     <header>
-      <h1>📱 Mobile Simulator</h1>
+      <h1>Mobile Simulator</h1>
     </header>
 
     <section class="device-section">
-      <label>Device</label>
-      <select x-model="selectedDevice" @change="simulate()">
-        <optgroup label="📱 iPhone">
-          <template x-for="device in devices.filter(d => d.name.includes('iPhone'))" :key="device.name">
-            <option :value="device.name" x-text="device.name"></option>
-          </template>
-        </optgroup>
-        <optgroup label="📱 Samsung">
-          <template x-for="device in devices.filter(d => d.name.includes('Samsung'))" :key="device.name">
-            <option :value="device.name" x-text="device.name"></option>
-          </template>
-        </optgroup>
-        <optgroup label="📱 Android">
-          <template x-for="device in devices.filter(d => d.name.includes('Pixel'))" :key="device.name">
-            <option :value="device.name" x-text="device.name"></option>
-          </template>
-        </optgroup>
-        <optgroup label="📱 Tablets">
-          <template x-for="device in devices.filter(d => d.name.includes('iPad'))" :key="device.name">
-            <option :value="device.name" x-text="device.name"></option>
-          </template>
-        </optgroup>
-      </select>
+      <label for="deviceSelect">Select Device</label>
+      <select id="deviceSelect"></select>
     </section>
 
     <section class="dimensions">
       <div class="dim-item">
         <span class="label">Width</span>
-        <span class="value" x-text="currentWidth + 'px'"></span>
+        <span class="value" id="widthDisplay">-</span>
       </div>
       <div class="dim-item">
         <span class="label">Height</span>
-        <span class="value" x-text="currentHeight + 'px'"></span>
+        <span class="value" id="heightDisplay">-</span>
       </div>
     </section>
 
     <section class="controls">
-      <button @click="rotate()" x-text="isRotated ? '🔄 Reset' : '🔁 Rotate'"></button>
-      <button @click="reset()">✕ Reset</button>
+      <button id="applyBtn">Apply Simulator</button>
+      <button id="rotateBtn">Rotate</button>
+      <button id="resetBtn">Close Simulator</button>
     </section>
 
     <section class="options">
       <label class="checkbox">
-        <input type="checkbox" x-model="changeUserAgent" @change="simulate()">
+        <input type="checkbox" id="changeUA" checked>
         <span>Change User Agent</span>
       </label>
       <label class="checkbox">
-        <input type="checkbox" x-model="addFrame" @change="simulate()">
+        <input type="checkbox" id="addFrame" checked>
         <span>Show Device Frame</span>
       </label>
     </section>
 
     <section class="current-info">
-      <p>Current: <strong x-text="selectedDevice"></strong></p>
+      <p>Current Device</p>
+      <strong id="currentDevice">-</strong>
     </section>
   </div>
 
