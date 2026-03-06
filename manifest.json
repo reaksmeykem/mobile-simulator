@@ -6,9 +6,14 @@
   "author": "Your Name",
   "permissions": [
     "activeTab",
+    "tabs",
+    "webNavigation",
     "scripting",
     "storage"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "host_permissions": [
     "http://*/*",
     "https://*/*"

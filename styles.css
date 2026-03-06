@@ -1,3 +1,12 @@
+:root {
+  --laravel-red: #ec4899;
+  --laravel-red-deep: #be185d;
+  --laravel-red-soft: #fde7f3;
+  --laravel-red-shadow: rgba(236, 72, 153, 0.24);
+  --laravel-red-shadow-strong: rgba(236, 72, 153, 0.34);
+  --laravel-ink: #201924;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +15,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 52%, #241523 100%);
   width: 360px;
   min-width: 360px;
   max-width: 360px;
@@ -26,7 +35,7 @@ body {
 
 /* Header */
 header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #9f67ff 0%, #ec4899 62%, #9d174d 100%);
   padding: 20px 20px 18px;
   text-align: center;
   position: relative;
@@ -95,15 +104,15 @@ select {
 }
 
 select:hover {
-  border-color: #667eea;
+  border-color: var(--laravel-red);
   background: white;
 }
 
 select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--laravel-red);
   background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 45, 32, 0.12);
 }
 
 optgroup {
@@ -119,46 +128,141 @@ option {
   color: #1f2937;
 }
 
-/* Dimensions */
-.dimensions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 0 24px 18px;
-  background: white;
+.device-picker-button {
+  width: 100%;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #353238 0%, #27252b 100%);
+  border: 1px solid rgba(168, 85, 247, 0.42);
+  border-radius: 14px;
+  color: white;
+  justify-content: space-between;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.dim-item {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  padding: 15px 14px;
-  border-radius: 10px;
-  text-align: center;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+.device-picker-button:hover {
+  border-color: #7c9cff;
 }
 
-.dim-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: #667eea;
+.device-picker-button.open {
+  border-color: #7c9cff;
+  border-radius: 14px 14px 0 0;
 }
 
-.dim-item .label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
+.device-picker-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  text-align: left;
 }
 
-.dim-item .value {
-  display: block;
-  font-size: 17px;
+.device-picker-copy strong {
+  font-size: 14px;
   font-weight: 700;
-  color: #667eea;
-  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+
+.device-picker-copy small {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.device-picker-icon {
+  width: 18px;
+  height: 18px;
+  color: #8f8a97;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.device-picker-panel {
+  display: none;
+  margin-top: 0;
+  max-height: 190px;
+  overflow-y: auto;
+  border: 1px solid rgba(124, 156, 255, 0.58);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: #fbfbfc;
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.18);
+}
+
+.device-picker-panel.open {
+  display: block;
+}
+
+.device-option {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0;
+  background: #ffffff;
+  color: #111827;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.device-option:last-child {
+  border-bottom: none;
+}
+
+.device-option:hover {
+  background: #f4f6fb;
+}
+
+.device-option.active {
+  background: #2d6cdf;
+  color: #ffffff;
+}
+
+.device-option-icon {
+  width: 18px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.device-option-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.device-option-icon svg,
+.device-option-icon svg * {
+  stroke: currentColor;
+}
+
+.device-option-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 2px;
+}
+
+.device-option-name {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.device-option-meta {
+  font-size: 10px;
+  font-weight: 600;
+  color: inherit;
+  opacity: 0.72;
 }
 
 /* Controls */
@@ -187,16 +291,16 @@ button {
 }
 
 #applyBtn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 62%, #be185d 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px var(--laravel-red-shadow-strong);
   font-size: 14px;
   padding: 14px 16px;
 }
 
 #applyBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 20px rgba(255, 45, 32, 0.45);
 }
 
 #applyBtn:active {
@@ -205,15 +309,15 @@ button {
 
 #rotateBtn {
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: var(--laravel-red);
+  border: 2px solid var(--laravel-red);
 }
 
 #rotateBtn:hover {
-  background: #667eea;
+  background: var(--laravel-red);
   color: white;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px var(--laravel-red-shadow);
 }
 
 #resetBtn {
@@ -253,7 +357,7 @@ button {
 
 .checkbox:hover {
   background: #f3f4f6;
-  border-color: #667eea;
+  border-color: var(--laravel-red);
 }
 
 .checkbox input[type="checkbox"] {
@@ -262,7 +366,7 @@ button {
   margin: 0;
   margin-right: 10px;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: var(--laravel-red);
   border-radius: 4px;
 }
 
@@ -271,35 +375,6 @@ button {
   font-weight: 500;
   color: #374151;
   user-select: none;
-}
-
-/* Current Info */
-.current-info {
-  padding: 18px 24px 22px;
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  text-align: center;
-  border-top: 1px solid #e5e7eb;
-}
-
-.current-info p {
-  font-size: 11px;
-  color: #6b7280;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-
-.current-info strong {
-  display: block;
-  font-size: 15px;
-  font-weight: 700;
-  color: #667eea;
-  margin-top: 8px;
-  background: white;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
 }
 
 /* Status Messages */
@@ -348,12 +423,11 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 4px;
+  background: var(--laravel-red);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #764ba2;
+  background: var(--laravel-red-deep);
 }
 
 /* Loading State */
