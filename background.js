@@ -52,8 +52,14 @@ function runSimulation(tabId, simulation, attempt = 0) {
   });
 }
 
-function reapplySimulation(tabId, url) {
+function reapplySimulation(tabId, url, frameId = 0) {
   if (!isSupportedUrl(url || '')) {
+    return;
+  }
+
+  // If this is not the main frame, we don't want to re-run the simulation logic
+  // as the simulation logic should only run once on the host page.
+  if (frameId !== 0) {
     return;
   }
 
@@ -65,7 +71,22 @@ function reapplySimulation(tabId, url) {
       return;
     }
 
-    runSimulation(tabId, simulation);
+    // Check if simulator is already running on the page before reapplying
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => !!document.getElementById('mobile-simulator-container')
+    }).then((results) => {
+      if (results && results[0] && results[0].result) {
+        // Already running, no need to reapply unless it's a full page refresh
+        // But if we are here, it's either onUpdated or onCompleted.
+        // If the URL changed but the container still exists, it means history.replaceState was likely used.
+        return;
+      }
+      runSimulation(tabId, simulation);
+    }).catch(() => {
+      // If we can't even check, try running it anyway (will fail if cross-origin or restricted)
+      runSimulation(tabId, simulation);
+    });
   });
 }
 
@@ -78,19 +99,20 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 chrome.webNavigation.onCompleted.addListener((details) => {
-  if (details.frameId !== 0) {
-    return;
-  }
-
-  chrome.tabs.get(details.tabId, (tab) => {
-    if (chrome.runtime.lastError || !tab) {
-      return;
-    }
-
-    reapplySimulation(details.tabId, tab.url || '');
-  });
+  reapplySimulation(details.tabId, details.url || '', details.frameId);
 });
 
 chrome.tabs.onRemoved.addListener((tabId) => {
   clearActiveSimulation(tabId);
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'UPDATE_SIMULATION_STATE' && sender.tab) {
+    const tabId = sender.tab.id;
+    chrome.storage.local.get(['activeSimulations'], (result) => {
+      const activeSimulations = result.activeSimulations || {};
+      activeSimulations[String(tabId)] = message.simulation;
+      chrome.storage.local.set({ activeSimulations });
+    });
+  }
 });
