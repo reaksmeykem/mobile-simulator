@@ -7,7 +7,7 @@ A Chrome extension to simulate mobile devices and test responsive designs with r
 
 ## Features
 
-- **16+ Devices** — iPhone, Samsung Galaxy, Google Pixel, iPad, MacBook
+- **4 Devices** — iPhone, Samsung Galaxy, MacBook Air (13" & 15")
 - **Realistic Mockups** — Dynamic Island, punch-hole camera, bezels, physical buttons
 - **Rotate** — Switch between portrait and landscape
 - **Theme-aware Status Bar** — Matches the website's background color
@@ -36,17 +36,7 @@ A Chrome extension to simulate mobile devices and test responsive designs with r
 | Device | Resolution |
 |--------|-----------|
 | iPhone 17 Pro | 402 x 874 |
-| iPhone 16 Pro | 402 x 874 |
-| iPhone 16 | 393 x 852 |
-| iPhone 15 Pro | 393 x 852 |
-| iPhone SE | 375 x 667 |
 | Samsung Galaxy S26 | 360 x 800 |
-| Samsung Galaxy S25 | 360 x 800 |
-| Samsung Galaxy S24 | 360 x 800 |
-| Google Pixel 8 | 412 x 915 |
-| iPad Pro 12.9" | 1024 x 1366 |
-| iPad Air | 820 x 1180 |
-| iPad Mini | 768 x 1024 |
 | MacBook Air 13" | 1280 x 832 |
 | MacBook Air 15" | 1440 x 932 |
 
