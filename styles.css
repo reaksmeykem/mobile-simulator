@@ -28,6 +28,10 @@
   box-sizing: border-box;
 }
 
+html {
+  background: transparent !important;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   width: 340px;
@@ -41,6 +45,7 @@ body {
     radial-gradient(ellipse 80% 40% at 80% 100%, rgba(167, 139, 250, 0.08) 0%, transparent 50%);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  border-radius: 16px;
 }
 
 /* =================== APP =================== */
@@ -48,6 +53,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 /* =================== HEADER =================== */
@@ -181,7 +188,7 @@ body {
 
 .device-picker-button.open {
   border-color: #7c9cff;
-  border-radius: 14px 14px 0 0;
+  border-radius: 14px;
 }
 
 .device-picker-copy {

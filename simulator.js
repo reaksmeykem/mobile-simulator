@@ -203,10 +203,14 @@ function resizeViewport(width, height, deviceName, showFrame) {
     const topInset = Math.max(6, Math.round(screenHeight * 0.008));
 
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position: absolute; inset: 0; z-index: 100; pointer-events: none; color: #111;';
+    overlay.style.cssText = 'position: absolute; inset: 0; z-index: 100; pointer-events: none; color: #000;';
+
+    // Background bar behind the status bar — ensures icons are always visible
+    const statusBg = document.createElement('div');
+    statusBg.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; height: 44px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); z-index: 99;';
 
     const statusBar = document.createElement('div');
-    statusBar.style.cssText = `position: absolute; top: ${topInset}px; left: ${horizontalInset}px; right: ${horizontalInset}px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: -0.2px; z-index: 101; color: #111;`;
+    statusBar.style.cssText = `position: absolute; top: ${topInset}px; left: ${horizontalInset}px; right: ${horizontalInset}px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: -0.2px; z-index: 101; color: #000;`;
 
     const timeLabel = document.createElement('div');
     timeLabel.textContent = getLocalDeviceTime();
@@ -247,6 +251,7 @@ function resizeViewport(width, height, deviceName, showFrame) {
     const homeIndicator = document.createElement('div');
     homeIndicator.style.cssText = `position: absolute; left: 50%; bottom: ${Math.max(8, Math.round(screenHeight * 0.009))}px; transform: translateX(-50%); width: ${Math.round(screenWidth * 0.32)}px; height: 4px; background: rgba(17,17,17,0.8); border-radius: 999px;`;
 
+    overlay.appendChild(statusBg);
     overlay.appendChild(statusBar);
     overlay.appendChild(homeIndicator);
 
@@ -258,14 +263,25 @@ function resizeViewport(width, height, deviceName, showFrame) {
       const fallbackColor = baseColor || { r: 245, g: 245, b: 245, a: 1 };
       const isDark = getColorLuminance(fallbackColor) < 140;
       const foreground = isDark ? '#ffffff' : '#000000';
+      const barBg = isDark
+        ? colorToRgba(fallbackColor, 0.88)
+        : colorToRgba(fallbackColor, 0.92);
 
+      // Update status bar background to match the page's top color
+      statusBg.style.background = `linear-gradient(180deg, ${barBg} 0%, ${colorToRgba(fallbackColor, isDark ? 0.82 : 0.88)} 100%)`;
+
+      // Update all parent containers so currentColor cascades to all children
+      overlay.style.color = foreground;
+      statusBar.style.color = foreground;
       timeLabel.textContent = getLocalDeviceTime();
       timeLabel.style.color = foreground;
       statusIcons.style.color = foreground;
       
-      // Explicitly update battery components background if needed
-      batteryLevel.style.backgroundColor = 'currentColor';
-      batteryCap.style.backgroundColor = 'currentColor';
+      // Explicitly update signal bars, battery border, level, and cap
+      signal.style.color = foreground;
+      battery.style.borderColor = foreground;
+      batteryLevel.style.backgroundColor = foreground;
+      batteryCap.style.backgroundColor = foreground;
       
       // Update home indicator to contrast with background
       homeIndicator.style.background = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(17,17,17,0.8)';
@@ -333,22 +349,27 @@ function resizeViewport(width, height, deviceName, showFrame) {
     }, 30000);
 
     function applyTheme(baseColor) {
-      const isDark = getColorLuminance(baseColor) < 140;
-      const foreground = isDark ? '#f4f4f4' : '#5c5c5c';
-      const secondary = isDark ? 'rgba(255,255,255,0.78)' : 'rgba(92,92,92,0.92)';
-      const badgeBg = isDark ? 'rgba(255,255,255,0.22)' : 'rgba(164,164,164,0.9)';
+      const fallbackColor = baseColor || { r: 245, g: 245, b: 245, a: 1 };
+      const isDark = getColorLuminance(fallbackColor) < 140;
+      const foreground = isDark ? '#f4f4f4' : '#1a1a1a';
+      const secondary = isDark ? 'rgba(255,255,255,0.78)' : 'rgba(40,40,40,0.92)';
+      const badgeBg = isDark ? 'rgba(255,255,255,0.22)' : 'rgba(120,120,120,0.85)';
+      const badgeText = '#ffffff';
       const barBg = isDark
-        ? colorToRgba(baseColor, 0.88)
-        : colorToRgba(baseColor, 0.92);
+        ? colorToRgba(fallbackColor, 0.88)
+        : colorToRgba(fallbackColor, 0.92);
 
+      // Update all containers and children explicitly
       overlay.style.color = foreground;
-      statusBg.style.background = `linear-gradient(180deg, ${barBg} 0%, ${colorToRgba(baseColor, isDark ? 0.82 : 0.88)} 100%)`;
+      statusBar.style.color = foreground;
+      statusBg.style.background = `linear-gradient(180deg, ${barBg} 0%, ${colorToRgba(fallbackColor, isDark ? 0.82 : 0.88)} 100%)`;
       statusBg.style.borderBottom = 'none';
       timeLabel.textContent = getLocalDeviceTime();
       timeLabel.style.color = foreground;
       rightSide.style.color = secondary;
+      mobileSignal.style.color = secondary;
       batteryWrap.style.background = badgeBg;
-      batteryWrap.style.color = '#ffffff';
+      batteryWrap.style.color = badgeText;
     }
 
     return {
@@ -658,13 +679,13 @@ function resizeViewport(width, height, deviceName, showFrame) {
   if (showFrame) {
     if (isIPhone) {
       const dynamicIsland = document.createElement('div');
-      dynamicIsland.style.cssText = 'position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 126px; height: 30px; background: linear-gradient(180deg, #151515 0%, #050505 100%); border-radius: 999px; z-index: 10; box-shadow: inset 0 1px 1px rgba(255,255,255,0.08);';
+      dynamicIsland.style.cssText = 'position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 126px; height: 30px; background: linear-gradient(180deg, #151515 0%, #050505 100%); border-radius: 999px; z-index: 200; box-shadow: inset 0 1px 1px rgba(255,255,255,0.08);';
 
       const islandCamera = document.createElement('div');
-      islandCamera.style.cssText = 'position: absolute; top: 10px; left: calc(50% + 40px); width: 10px; height: 10px; background: radial-gradient(circle, #203c8a 20%, #0a0a0a 65%); border-radius: 50%; z-index: 11;';
+      islandCamera.style.cssText = 'position: absolute; top: 10px; left: calc(50% + 40px); width: 10px; height: 10px; background: radial-gradient(circle, #203c8a 20%, #0a0a0a 65%); border-radius: 50%; z-index: 201;';
 
       const islandSensor = document.createElement('div');
-      islandSensor.style.cssText = 'position: absolute; top: 16px; left: calc(50% - 28px); width: 40px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; z-index: 11;';
+      islandSensor.style.cssText = 'position: absolute; top: 16px; left: calc(50% - 28px); width: 40px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; z-index: 201;';
 
       mockup.appendChild(dynamicIsland);
       mockup.appendChild(islandCamera);
@@ -717,28 +738,42 @@ function resizeViewport(width, height, deviceName, showFrame) {
   screen.style.cssText = `position: relative; width: ${width}px; height: ${height}px; background: white; border-radius: ${showFrame ? screenRadius : '8px'}; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.1);`;
 
   const iframe = document.createElement('iframe');
-  iframe.style.cssText = `position: absolute; top: ${topOverlayInset}px; left: 0; width: ${width}px; height: ${height - topOverlayInset}px; border: none; background: white; border-radius: 0 0 ${showFrame && !isMacBook ? screenRadius : '0'} ${showFrame && !isMacBook ? screenRadius : '0'};`;
+  iframe.style.cssText = `position: absolute; top: ${topOverlayInset}px; left: 0; width: ${width}px; height: ${height - topOverlayInset}px; border: none; background: white; border-radius: 0 0 ${showFrame && !isMacBook ? screenRadius : '0'} ${showFrame && !isMacBook ? screenRadius : '0'}; visibility: hidden;`;
   let topOverlayControls = null;
 
   // Sync navigation state from iframe to outer window so refreshes retain correct URL
+  // Only sync for same-origin pages — syncing cross-origin URLs breaks iframe navigation
+  const initialOrigin = window.location.origin;
   const syncInnerToOuterNav = () => {
     try {
       if (iframe.contentWindow && iframe.contentWindow.location) {
         const innerUrl = iframe.contentWindow.location.href;
         const outerUrl = window.location.href;
         if (innerUrl && innerUrl !== 'about:blank' && innerUrl !== outerUrl) {
-          // Check if we should ignore this change to prevent loops or unwanted refreshes
-          // By updating the outer URL, the extension's background script may see a tab update
-          // and re-trigger the simulator, which can cause a refresh if not handled.
-          window.history.replaceState(null, '', innerUrl);
+          const innerOrigin = new URL(innerUrl).origin;
+          // Only sync if same-origin — cross-origin sync breaks iframe navigation
+          if (innerOrigin === initialOrigin) {
+            window.history.replaceState(null, '', innerUrl);
+          }
         }
       }
     } catch(e) {
-      // Ignore cross-origin errors if navigating outwards
+      // Cross-origin — cannot access iframe location, skip sync
     }
   };
 
   const navSyncInterval = setInterval(syncInnerToOuterNav, 500);
+
+  // Detect when iframe navigates cross-origin (e.g. external link inside iframe)
+  let iframeIsSameOrigin = true;
+  const crossOriginCheckInterval = setInterval(() => {
+    try {
+      iframe.contentDocument;
+      iframeIsSameOrigin = true;
+    } catch (e) {
+      iframeIsSameOrigin = false;
+    }
+  }, 1000);
 
   // Update storage with current simulation state
   try {
@@ -763,8 +798,44 @@ function resizeViewport(width, height, deviceName, showFrame) {
 
   iframe.onload = function() {
     syncInnerToOuterNav();
+
+    // Check if iframe is same-origin before trying to access contentDocument
+    let isSameOrigin = false;
     try {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      isSameOrigin = !!iframe.contentDocument;
+    } catch (e) {
+      isSameOrigin = false;
+    }
+
+    if (!isSameOrigin) {
+      // Cross-origin: the iframe navigated to an external URL.
+      // Most external sites block iframe embedding via X-Frame-Options or CSP,
+      // which causes "refused to connect" errors. Redirect the top window
+      // to that URL so the user can actually view the site.
+      try {
+        // Try to get the URL the iframe navigated to
+        const iframeUrl = iframe.contentWindow.location.href;
+        if (iframeUrl && iframeUrl !== 'about:blank') {
+          window.top.location.href = iframeUrl;
+          return;
+        }
+      } catch (e) {
+        // Can't access cross-origin location — use the iframe's src attribute as fallback
+        if (iframe.src && iframe.src !== 'about:blank') {
+          const srcOrigin = new URL(iframe.src).origin;
+          if (srcOrigin !== initialOrigin) {
+            window.top.location.href = iframe.src;
+            return;
+          }
+        }
+      }
+      // Fallback: just reveal it (for same-scheme cross-origin that might still work)
+      iframe.style.visibility = 'visible';
+      return;
+    }
+
+    try {
+      const iframeDoc = iframe.contentDocument;
       
       // Prevent recursion if this is somehow called again
       if (iframeDoc._simulatorInjected) return;
@@ -781,8 +852,54 @@ function resizeViewport(width, height, deviceName, showFrame) {
       viewportMeta.content = `width=${width}, initial-scale=1.0, maximum-scale=1.0, user-scalable=no`;
 
       const style = iframeDoc.createElement('style');
-      style.textContent = `html, body { width: ${width}px !important; min-height: ${height}px !important; margin: 0 !important; padding: 0 !important; overflow-x: hidden !important; box-sizing: border-box !important; scrollbar-width: none !important; -ms-overflow-style: none !important; } ::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; } * { scrollbar-width: none !important; -ms-overflow-style: none !important; }`;
+      style.textContent = `html, body { width: ${width}px !important; height: ${height}px !important; min-height: ${height}px !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; overflow: auto !important; scrollbar-width: none !important; -ms-overflow-style: none !important; } ::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; } * { scrollbar-width: none !important; -ms-overflow-style: none !important; }`;
       iframeDoc.head.appendChild(style);
+
+      // Reveal iframe only after CSS has been injected to prevent scrollbar/content flash
+      iframe.style.visibility = 'visible';
+
+      // Inject external link interceptor into the IFRAME document — redirects
+      // window.top for cross-origin links so the browser navigates to the
+      // external URL instead of trying to load it inside the iframe (which
+      // would fail for sites that set X-Frame-Options or CSP frame-ancestors).
+      try {
+        const currentOrigin = initialOrigin;
+        iframeDoc.addEventListener('click', function(e) {
+          var a = e.target && (e.target.closest ? e.target.closest('a') : null);
+          if (!a || !a.href) return;
+          try {
+            var linkUrl = new URL(a.href, iframe.contentWindow.location.href);
+            if (linkUrl.origin !== currentOrigin) {
+              // External link — navigate the top window so it actually loads
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              window.top.location.href = linkUrl.href;
+            } else if (a.target === '_blank') {
+              // Same-origin link with target=_blank — navigate within iframe
+              // instead of opening a new tab (which would be outside the simulator)
+              e.preventDefault();
+              e.stopPropagation();
+              iframe.contentWindow.location.href = linkUrl.href;
+            }
+          } catch(err) {}
+        }, true);
+
+        // Also intercept window.open calls for external URLs
+        const origOpen = iframe.contentWindow.open;
+        iframe.contentWindow.open = function(url, target, features) {
+          try {
+            if (url) {
+              var linkUrl = new URL(url, iframe.contentWindow.location.href);
+              if (linkUrl.origin !== currentOrigin) {
+                window.top.location.href = linkUrl.href;
+                return null;
+              }
+            }
+          } catch(err) {}
+          return origOpen.call(this, url, target, features);
+        };
+      } catch (e) { /* ignore if injection fails */ }
 
       if (topOverlayControls && iframe.contentWindow) {
         const syncTopStatusBar = () => {
@@ -812,7 +929,8 @@ function resizeViewport(width, height, deviceName, showFrame) {
         }
       }
     } catch (e) {
-      // ignore cross-origin styling limits
+      // Fallback: reveal iframe even if CSS injection fails
+      iframe.style.visibility = 'visible';
     }
   };
 
@@ -847,13 +965,14 @@ function resizeViewport(width, height, deviceName, showFrame) {
   container._scrollState = preservedScrollState || captureScrollState();
   container._cleanup = () => {
     clearInterval(navSyncInterval);
+    clearInterval(crossOriginCheckInterval);
     if (topOverlayControls && typeof topOverlayControls.cleanup === 'function') {
       topOverlayControls.cleanup();
     }
   };
 
-  document.body.appendChild(container);
   applyScrollLock();
+  document.body.appendChild(container);
 }
 
 function resetViewport() {
