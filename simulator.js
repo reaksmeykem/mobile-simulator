@@ -876,6 +876,14 @@ function resetViewport() {
     document.body.style.overscrollBehavior = scrollState.bodyOverscrollBehavior || '';
     document.documentElement.style.overflow = scrollState.docOverflow || '';
     document.documentElement.style.overscrollBehavior = scrollState.docOverscrollBehavior || '';
+
+    // Clear simulation from storage so it doesn't reapply on refresh
+    try {
+      chrome.runtime.sendMessage({ type: 'CLOSE_SIMULATION' }, () => {
+        if (chrome.runtime.lastError) { /* ignore */ }
+      });
+    } catch (e) { /* ignore */ }
+
     return;
   }
 }

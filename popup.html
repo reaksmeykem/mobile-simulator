@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -6,40 +6,77 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="popup" id="app">
-    <header>
-      <h1>Mobile Simulator</h1>
+  <div class="app">
+    <header class="header">
+      <div class="header-glow"></div>
+      <div class="header-content">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="3"/>
+            <line x1="12" y1="18" x2="12" y2="18.01" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div class="header-text">
+          <h1>Mobile Simulator</h1>
+          <span class="version">v1.0.0</span>
+        </div>
+      </div>
     </header>
 
-    <section class="device-section">
-      <label for="devicePickerButton">Select Device</label>
-      <select id="deviceSelect" hidden></select>
-      <button type="button" class="device-picker-button" id="devicePickerButton" aria-expanded="false">
-        <span class="device-picker-copy">
-          <strong id="devicePickerName">iPhone 17 Pro</strong>
-          <small id="devicePickerMeta">402 x 874 px</small>
-        </span>
-        <span class="device-picker-icon" id="devicePickerIcon" aria-hidden="true">v</span>
-      </button>
-      <div class="device-picker-panel" id="devicePickerPanel"></div>
-    </section>
+    <main class="main">
+      <section class="card device-card">
+        <label class="card-label">Device</label>
+        <div class="device-select-wrapper">
+          <button type="button" class="device-picker-button" id="devicePickerButton">
+            <div class="device-picker-copy">
+              <strong id="devicePickerName">iPhone 17 Pro</strong>
+              <small id="devicePickerMeta">402 x 874 px</small>
+            </div>
+            <span class="device-picker-icon" id="devicePickerIcon">v</span>
+          </button>
+          <div class="device-picker-panel" id="devicePickerPanel"></div>
+        </div>
+      </section>
 
-    <section class="controls">
-      <button id="applyBtn">Apply Simulator</button>
-      <button id="rotateBtn">Rotate</button>
-      <button id="resetBtn">Close Simulator</button>
-    </section>
+      <section class="card actions-card">
+        <button class="btn btn-primary" id="applyBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <span>Apply</span>
+        </button>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="rotateBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+            <span>Rotate</span>
+          </button>
+          <button class="btn btn-danger" id="resetBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            <span>Close</span>
+          </button>
+        </div>
+      </section>
 
-    <section class="options">
-      <label class="checkbox">
-        <input type="checkbox" id="changeUA" checked>
-        <span>Change User Agent</span>
-      </label>
-      <label class="checkbox">
-        <input type="checkbox" id="addFrame" checked>
-        <span>Show Device Frame</span>
-      </label>
-    </section>
+      <section class="card options-card">
+        <label class="card-label">Options</label>
+        <label class="toggle">
+          <input type="checkbox" id="changeUA" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">Change User Agent</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="addFrame" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">Show Device Frame</span>
+        </label>
+      </section>
+    </main>
   </div>
 
   <script src="popup.js"></script>

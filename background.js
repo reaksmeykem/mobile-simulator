@@ -115,4 +115,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       chrome.storage.local.set({ activeSimulations });
     });
   }
+  if (message.type === 'CLOSE_SIMULATION' && sender.tab) {
+    clearActiveSimulation(sender.tab.id);
+    sendResponse({ success: true });
+  }
 });

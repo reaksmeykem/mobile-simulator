@@ -1,27 +1,21 @@
-﻿// Mobile Simulator - Popup Controller
+// Mobile Simulator - Popup Controller
 const devices = [
   { name: 'iPhone 17 Pro', width: 402, height: 874, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15' },
-  { name: 'Samsung Galaxy S26', width: 360, height: 800, userAgent: 'Mozilla/5.0 (Linux; Android 15; SM-S926B) AppleWebKit/537.36' }
+  { name: 'Samsung Galaxy S26', width: 360, height: 800, userAgent: 'Mozilla/5.0 (Linux; Android 15; SM-S926B) AppleWebKit/537.36' },
+  { name: 'MacBook Air 13"', width: 1280, height: 832, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) AppleWebKit/605.1.15' },
+  { name: 'MacBook Air 15"', width: 1440, height: 932, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) AppleWebKit/605.1.15' }
 ];
 
-const DEVICE_PICKER_ICON_SVG = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="#000000" aria-hidden="true">
-    <g fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-      <rect width="12.5" height="18.5" x="5.75" y="2.75" rx="3"></rect>
-      <path d="M11 17.75h2"></path>
-    </g>
-  </svg>
-`;
+const PHONE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><rect width="12.5" height="18.5" x="5.75" y="2.75" rx="3"></rect><path d="M11 17.75h2"></path></svg>';
+const MAC_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="2" y1="21" x2="22" y2="21"></line></svg>';
 
 // State
 let selectedDevice = 'iPhone 17 Pro';
 let isRotated = false;
 let changeUserAgent = true;
 let addFrame = true;
-let isDevicePickerOpen = false;
 
 // DOM Elements
-const deviceSelect = document.getElementById('deviceSelect');
 const devicePickerButton = document.getElementById('devicePickerButton');
 const devicePickerPanel = document.getElementById('devicePickerPanel');
 const devicePickerIcon = document.getElementById('devicePickerIcon');
@@ -51,79 +45,69 @@ function clearActiveSimulation(tabId) {
 
 // Initialize
 function init() {
-  applyBtn.textContent = 'Apply Simulator';
-  resetBtn.textContent = 'Close Simulator';
-  setRotateButtonLabel();
-
-  populateDeviceSelect();
   renderDevicePicker();
   loadSettings();
   attachEventListeners();
 }
 
-function populateDeviceSelect() {
-  devices.forEach((device) => {
-    const option = document.createElement('option');
-    option.value = device.name;
-    option.textContent = device.name;
-    deviceSelect.appendChild(option);
-  });
-}
-
 function setDevicePickerOpen(isOpen) {
-  isDevicePickerOpen = isOpen;
+  devicePickerPanel.style.display = isOpen ? 'block' : 'none';
   devicePickerButton.classList.toggle('open', isOpen);
-  devicePickerPanel.classList.toggle('open', isOpen);
-  devicePickerButton.setAttribute('aria-expanded', String(isOpen));
   devicePickerIcon.textContent = isOpen ? '^' : 'v';
 }
 
 function renderDevicePicker() {
-  devicePickerPanel.textContent = '';
+  devicePickerPanel.innerHTML = '';
   devices.forEach((device) => {
-    const option = document.createElement('button');
-    option.type = 'button';
-    option.className = 'device-option';
-    option.dataset.deviceName = device.name;
+    const isActive = device.name === selectedDevice;
 
-    const icon = document.createElement('span');
-    icon.className = 'device-option-icon';
-    icon.innerHTML = DEVICE_PICKER_ICON_SVG;
+    const optionBtn = document.createElement('button');
+    optionBtn.type = 'button';
+    optionBtn.className = 'device-option' + (isActive ? ' active' : '');
+    optionBtn.dataset.deviceName = device.name;
 
-    const copy = document.createElement('span');
-    copy.className = 'device-option-copy';
+    const iconBox = document.createElement('span');
+    iconBox.className = 'device-option-icon';
+    iconBox.innerHTML = device.name.toLowerCase().includes('macbook') ? MAC_ICON : PHONE_ICON;
 
-    const name = document.createElement('span');
-    name.className = 'device-option-name';
-    name.textContent = device.name;
+    const optCopy = document.createElement('div');
+    optCopy.className = 'device-option-copy';
 
-    const meta = document.createElement('span');
-    meta.className = 'device-option-meta';
-    meta.textContent = `${device.width} X ${device.height}PX`;
+    const optName = document.createElement('strong');
+    optName.className = 'device-option-name';
+    optName.textContent = device.name;
 
-    copy.appendChild(name);
-    copy.appendChild(meta);
-    option.appendChild(icon);
-    option.appendChild(copy);
+    const optMeta = document.createElement('small');
+    optMeta.className = 'device-option-meta';
+    optMeta.textContent = `${device.width} x ${device.height}`;
 
-    option.addEventListener('click', () => {
+    optCopy.appendChild(optName);
+    optCopy.appendChild(optMeta);
+    optionBtn.appendChild(iconBox);
+    optionBtn.appendChild(optCopy);
+
+    optionBtn.addEventListener('click', function() {
       setSelectedDevice(device.name);
       setDevicePickerOpen(false);
     });
 
-    devicePickerPanel.appendChild(option);
+    devicePickerPanel.appendChild(optionBtn);
   });
 }
 
 function updateSelectedDeviceUI() {
-  const device = getCurrentDevice();
+  var device = getCurrentDevice();
 
-  deviceSelect.value = selectedDevice;
   devicePickerName.textContent = device.name.toUpperCase();
-  devicePickerMeta.textContent = `${device.width} X ${device.height}PX`;
+  devicePickerMeta.textContent = device.width + ' x ' + device.height + 'px';
 
-  devicePickerPanel.querySelectorAll('.device-option').forEach((option) => {
-    option.classList.toggle('active', option.dataset.deviceName === selectedDevice);
+  devicePickerPanel.querySelectorAll('.device-option').forEach(function(option) {
+    var isActive = option.dataset.deviceName === selectedDevice;
+    option.classList.toggle('active', isActive);
+    var meta = option.querySelector('.device-option-meta');
+    if (meta) {
+      meta.style.color = isActive ? 'rgba(255,255,255,0.7)' : '#6b7280';
+    }
   });
 }
 
@@ -131,17 +115,11 @@ function setSelectedDevice(deviceName) {
   selectedDevice = deviceName;
   isRotated = false;
   setRotateButtonLabel();
-  updateDisplay();
   updateSelectedDeviceUI();
-
-  applyBtn.style.animation = 'pulse 0.5s ease';
-  setTimeout(() => {
-    applyBtn.style.animation = '';
-  }, 500);
 }
 
 function loadSettings() {
-  chrome.storage.local.get(['selectedDevice', 'changeUserAgent', 'addFrame'], (result) => {
+  chrome.storage.local.get(['selectedDevice', 'changeUserAgent', 'addFrame'], function(result) {
     if (result.selectedDevice) {
       selectedDevice = result.selectedDevice;
     }
@@ -156,144 +134,113 @@ function loadSettings() {
       addFrameCheckbox.checked = addFrame;
     }
 
-    updateDisplay();
-    checkAndAutoApply();
-  });
-}
-
-function checkAndAutoApply() {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs[0]) return;
-
-    const url = tabs[0].url || '';
-
-    if (!url.startsWith('chrome://') &&
-        !url.startsWith('chrome-extension://') &&
-        !url.startsWith('edge://') &&
-        !url.startsWith('about:') &&
-        url) {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        func: () => !!document.getElementById('mobile-simulator-container')
-      }).then((results) => {
-        if (results && results[0] && results[0].result) {
-          console.log('Simulator already active');
-        }
-      }).catch(() => {
-        // ignore restricted pages
-      });
-    }
+    updateSelectedDeviceUI();
   });
 }
 
 function attachEventListeners() {
-  applyBtn.addEventListener('click', () => {
+  devicePickerButton.addEventListener('click', function() {
+    var isHidden = !devicePickerPanel.style.display || devicePickerPanel.style.display === 'none';
+    setDevicePickerOpen(isHidden);
+  });
+
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('.device-select-wrapper')) {
+      setDevicePickerOpen(false);
+    }
+  });
+
+  applyBtn.addEventListener('click', function() {
     applyBtn.classList.add('loading');
     applyBtn.disabled = true;
-
     simulate(true);
-
-    setTimeout(() => {
+    setTimeout(function() {
       applyBtn.classList.remove('loading');
       applyBtn.disabled = false;
     }, 1000);
   });
 
-  devicePickerButton.addEventListener('click', () => {
-    setDevicePickerOpen(!isDevicePickerOpen);
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!event.target.closest('.device-section')) {
-      setDevicePickerOpen(false);
-    }
-  });
-
-  rotateBtn.addEventListener('click', () => {
+  rotateBtn.addEventListener('click', function() {
     isRotated = !isRotated;
     setRotateButtonLabel();
-    updateDisplay();
     simulate();
   });
 
-  resetBtn.addEventListener('click', () => {
+  resetBtn.addEventListener('click', function() {
     isRotated = false;
     setRotateButtonLabel();
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       if (!tabs[0]) return;
 
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
-        func: () => {
+        func: function() {
           if (globalThis.__mobileSimulatorResetViewport) {
             globalThis.__mobileSimulatorResetViewport();
           } else if (globalThis.resetViewport) {
             globalThis.resetViewport();
           }
         }
-      }).then(() => {
+      }).then(function() {
         clearActiveSimulation(tabs[0].id);
         showSuccess('Simulator closed');
-      }).catch((err) => console.error(err));
+      }).catch(function(err) { console.error(err); });
     });
   });
 
-  changeUACheckbox.addEventListener('change', () => {
+  changeUACheckbox.addEventListener('change', function() {
     changeUserAgent = changeUACheckbox.checked;
-    chrome.storage.local.set({ changeUserAgent });
+    chrome.storage.local.set({ changeUserAgent: changeUserAgent });
   });
 
-  addFrameCheckbox.addEventListener('change', () => {
+  addFrameCheckbox.addEventListener('change', function() {
     addFrame = addFrameCheckbox.checked;
-    chrome.storage.local.set({ addFrame });
+    chrome.storage.local.set({ addFrame: addFrame });
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       if (!tabs[0]) return;
 
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
-        func: () => !!document.getElementById('mobile-simulator-container')
-      }).then((results) => {
+        func: function() {
+          return !!document.getElementById('mobile-simulator-container');
+        }
+      }).then(function(results) {
         if (results && results[0] && results[0].result) {
           simulate();
         }
-      }).catch(() => {
-        // ignore restricted pages
-      });
+      }).catch(function() {});
     });
   });
 }
 
 function setRotateButtonLabel() {
-  rotateBtn.textContent = isRotated ? 'Reset Rotation' : 'Rotate';
+  rotateBtn.querySelector('span').textContent = isRotated ? 'Reset' : 'Rotate';
 }
 
 function getCurrentDevice() {
-  return devices.find((d) => d.name === selectedDevice) || devices[0];
+  return devices.find(function(d) { return d.name === selectedDevice; }) || devices[0];
 }
 
-function updateDisplay() {
+function simulate(closePopupOnSuccess) {
+  closePopupOnSuccess = closePopupOnSuccess || false;
+  var device = getCurrentDevice();
+  var width = isRotated ? device.height : device.width;
+  var height = isRotated ? device.width : device.height;
+
   updateSelectedDeviceUI();
-}
 
-function simulate(closePopupOnSuccess = false) {
-  const device = getCurrentDevice();
-  const width = isRotated ? device.height : device.width;
-  const height = isRotated ? device.width : device.height;
+  chrome.storage.local.set({ selectedDevice: selectedDevice, changeUserAgent: changeUserAgent, addFrame: addFrame });
 
-  updateDisplay();
-
-  chrome.storage.local.set({ selectedDevice, changeUserAgent, addFrame });
-
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     if (!tabs[0]) {
       showError('No active tab found');
       return;
     }
 
-    const tab = tabs[0];
-    const url = tab.url || '';
+    var tab = tabs[0];
+    var url = tab.url || '';
 
     if (url.startsWith('chrome://') ||
         url.startsWith('chrome-extension://') ||
@@ -305,8 +252,8 @@ function simulate(closePopupOnSuccess = false) {
     }
 
     saveActiveSimulation(tab.id, {
-      width,
-      height,
+      width: width,
+      height: height,
       deviceName: device.name,
       showFrame: addFrame
     });
@@ -314,10 +261,10 @@ function simulate(closePopupOnSuccess = false) {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['simulator.js']
-    }).then(() => {
+    }).then(function() {
       return chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: (w, h, name, frame) => {
+        func: function(w, h, name, frame) {
           if (globalThis.__mobileSimulatorResizeViewport) {
             globalThis.__mobileSimulatorResizeViewport(w, h, name, frame);
           } else if (globalThis.resizeViewport) {
@@ -326,43 +273,35 @@ function simulate(closePopupOnSuccess = false) {
         },
         args: [width, height, device.name, addFrame]
       });
-    }).then(() => {
+    }).then(function() {
       if (closePopupOnSuccess) {
         window.close();
         return;
       }
-
-      showSuccess('Simulator applied successfully');
-    }).catch((err) => {
+      showSuccess('Simulator applied');
+    }).catch(function(err) {
       clearActiveSimulation(tab.id);
-      showError('Failed to apply simulator');
+      showError('Failed to apply');
       console.error(err);
     });
   });
 }
 
 function showError(message) {
-  const notification = document.createElement('div');
+  var notification = document.createElement('div');
   notification.className = 'status-message error';
   notification.textContent = message;
   document.body.appendChild(notification);
-
-  setTimeout(() => {
-    notification.remove();
-  }, 3000);
+  setTimeout(function() { notification.remove(); }, 3000);
 }
 
 function showSuccess(message) {
-  const notification = document.createElement('div');
+  var notification = document.createElement('div');
   notification.className = 'status-message success';
-  notification.textContent = 'OK: ' + message;
+  notification.textContent = message;
   document.body.appendChild(notification);
-
-  setTimeout(() => {
-    notification.remove();
-  }, 2000);
+  setTimeout(function() { notification.remove(); }, 2000);
 }
-
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
