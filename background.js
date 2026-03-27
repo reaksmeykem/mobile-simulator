@@ -16,6 +16,19 @@ function clearActiveSimulation(tabId) {
   });
 }
 
+function injectEarlyScrollbarHide(tabId) {
+  chrome.storage.local.get(['activeSimulations'], (result) => {
+    const activeSimulations = result.activeSimulations || {};
+    const simulation = activeSimulations[String(tabId)];
+    if (!simulation) return;
+
+    chrome.scripting.insertCSS({
+      target: { tabId },
+      css: 'html, body { overflow: hidden !important; scrollbar-width: none !important; -ms-overflow-style: none !important; } ::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }'
+    }).catch(() => { /* ignore — page may not be ready yet */ });
+  });
+}
+
 function runSimulation(tabId, simulation, attempt = 0) {
   chrome.scripting.executeScript({
     target: { tabId },
@@ -91,11 +104,22 @@ function reapplySimulation(tabId, url, frameId = 0) {
 }
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  // Inject scrollbar-hiding CSS as early as possible (on 'loading' status)
+  if (changeInfo.status === 'loading' && isSupportedUrl(tab.url || '')) {
+    injectEarlyScrollbarHide(tabId);
+  }
+
   if (changeInfo.status !== 'complete') {
     return;
   }
 
   reapplySimulation(tabId, tab.url || '');
+});
+
+// Earliest possible injection point — right when the browser commits the navigation
+chrome.webNavigation.onCommitted.addListener((details) => {
+  if (details.frameId !== 0 || !isSupportedUrl(details.url || '')) return;
+  injectEarlyScrollbarHide(details.tabId);
 });
 
 chrome.webNavigation.onCompleted.addListener((details) => {

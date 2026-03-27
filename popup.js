@@ -2,6 +2,7 @@
 const devices = [
   { name: 'iPhone 17 Pro', width: 402, height: 874, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15' },
   { name: 'Samsung Galaxy S26', width: 360, height: 800, userAgent: 'Mozilla/5.0 (Linux; Android 15; SM-S926B) AppleWebKit/537.36' },
+  { name: 'iPad Air', width: 820, height: 1180, userAgent: 'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15' },
   { name: 'MacBook Air 13"', width: 1280, height: 832, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) AppleWebKit/605.1.15' },
   { name: 'MacBook Air 15"', width: 1440, height: 932, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) AppleWebKit/605.1.15' }
 ];

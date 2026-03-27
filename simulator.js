@@ -31,6 +31,11 @@ function resizeViewport(width, height, deviceName, showFrame) {
           height: 0 !important;
           display: none !important;
         }
+        #mobile-simulator-container iframe::-webkit-scrollbar {
+          width: 0 !important;
+          height: 0 !important;
+          display: none !important;
+        }
       `;
       document.head.appendChild(style);
     }
@@ -199,44 +204,50 @@ function resizeViewport(width, height, deviceName, showFrame) {
   }
 
   function createIPhoneStatusOverlay(screenWidth, screenHeight) {
-    const horizontalInset = Math.max(18, Math.round(screenWidth * 0.045));
-    const topInset = Math.max(6, Math.round(screenHeight * 0.008));
+    const isLandscape = screenWidth > screenHeight;
+    const horizontalInset = Math.max(24, Math.round(screenWidth * 0.07));
+    const statusBarHeight = isLandscape ? 0 : 54;
+    const statusContentTop = 10;
 
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position: absolute; inset: 0; z-index: 100; pointer-events: none; color: #000;';
+    overlay.style.cssText = 'position: absolute; inset: 0; z-index: 100; pointer-events: none; color: #fff;';
+
+    // Hide status bar entirely in landscape to avoid cluttering safe areas awkwardly
+    if (isLandscape) return { overlay, applyTheme: () => {}, cleanup: () => {} };
 
     // Background bar behind the status bar — ensures icons are always visible
     const statusBg = document.createElement('div');
-    statusBg.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; height: 44px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); z-index: 99;';
+    statusBg.style.cssText = `position: absolute; top: 0; left: 0; right: 0; height: ${statusBarHeight}px; background: transparent; z-index: 99;`;
 
     const statusBar = document.createElement('div');
-    statusBar.style.cssText = `position: absolute; top: ${topInset}px; left: ${horizontalInset}px; right: ${horizontalInset}px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: -0.2px; z-index: 101; color: #000;`;
+    statusBar.style.cssText = `position: absolute; top: ${statusContentTop}px; left: ${horizontalInset}px; right: ${horizontalInset}px; height: 24px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13.5px; font-weight: 700; letter-spacing: -0.2px; z-index: 101; color: #fff;`;
 
     const timeLabel = document.createElement('div');
     timeLabel.textContent = getLocalDeviceTime();
-    timeLabel.style.cssText = 'display: inline-flex; align-items: center; justify-content: center; height: 30px; padding: 0 6px 0 16px; color: currentColor; font-size: 14px; font-weight: 600; letter-spacing: 0; position: relative; z-index: 102;';
+    timeLabel.style.cssText = 'display: inline-flex; align-items: center; justify-content: center; min-width: 54px; height: 24px; padding: 0 4px 0 8px; color: currentColor; font-size: 13px; font-weight: 700; letter-spacing: -0.01em; position: relative; z-index: 102;';
 
     const statusIcons = document.createElement('div');
-    statusIcons.style.cssText = 'display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 16px 0 6px; font-size: 12px; font-weight: 700; color: currentColor; position: relative; z-index: 102;';
+    statusIcons.style.cssText = 'display: flex; align-items: center; gap: 5px; height: 24px; padding: 0 6px 0 4px; font-size: 12px; font-weight: 700; color: currentColor; position: relative; z-index: 102;';
 
     const signal = document.createElement('div');
-    signal.style.cssText = 'display: flex; align-items: flex-end; gap: 2px; height: 14px;';
-    [5, 7, 9, 11].forEach((barHeight) => {
+    signal.style.cssText = 'display: flex; align-items: flex-end; gap: 1.6px; height: 12px; color: currentColor;';
+    [4, 6, 8, 10].forEach((barHeight) => {
       const bar = document.createElement('span');
-      bar.style.cssText = `display: block; width: 2.2px; height: ${barHeight}px; background: currentColor; border-radius: 2px;`;
+      bar.style.cssText = `display: block; width: 2.3px; height: ${barHeight}px; background: currentColor; border-radius: 999px; opacity: 0.98;`;
       signal.appendChild(bar);
     });
 
-    const wifi = createIcon('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/><path d="M2 8.82a16 16 0 0 1 20 0"/></svg>');
+    const wifi = createIcon('<svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M7.5 10.7a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4Zm3.07-2.12a.72.72 0 0 1-1.01 0 2.94 2.94 0 0 0-4.12 0 .72.72 0 1 1-1.01-1.04 4.38 4.38 0 0 1 6.14 0 .72.72 0 0 1 0 1.04Zm2.2-2.24a.72.72 0 0 1-1.02 0 6.06 6.06 0 0 0-8.5 0 .72.72 0 1 1-1.02-1.04 7.5 7.5 0 0 1 10.54 0 .72.72 0 0 1 0 1.04Zm1.93-2.2a.72.72 0 0 1-1.02 0 8.81 8.81 0 0 0-12.37 0 .72.72 0 1 1-1.02-1.04 10.25 10.25 0 0 1 14.41 0 .72.72 0 0 1 0 1.04Z"/></svg>');
+    wifi.style.cssText = 'display: flex; align-items: center; justify-content: center; width: 15px; height: 12px; color: currentColor;';
 
     const battery = document.createElement('div');
-    battery.style.cssText = 'position: relative; width: 26px; height: 13px; border: 1.8px solid currentColor; border-radius: 4px; box-sizing: border-box;';
+    battery.style.cssText = 'position: relative; width: 24px; height: 12px; border: 1.65px solid currentColor; border-radius: 3.8px; box-sizing: border-box; color: currentColor;';
 
     const batteryCap = document.createElement('div');
-    batteryCap.style.cssText = 'position: absolute; top: 3px; right: -3px; width: 2px; height: 6px; background: currentColor; border-radius: 0 2px 2px 0;';
+    batteryCap.style.cssText = 'position: absolute; top: 3.1px; right: -3.2px; width: 2.4px; height: 5px; background: currentColor; border-radius: 0 2px 2px 0; opacity: 0.95;';
 
     const batteryLevel = document.createElement('div');
-    batteryLevel.style.cssText = 'position: absolute; top: 1.6px; left: 1.8px; width: 15px; height: 7.5px; background: currentColor; border-radius: 2px;';
+    batteryLevel.style.cssText = 'position: absolute; top: 1.55px; left: 1.6px; width: 15.4px; height: 5.9px; background: currentColor; border-radius: 2.3px;';
 
     battery.appendChild(batteryCap);
     battery.appendChild(batteryLevel);
@@ -249,7 +260,7 @@ function resizeViewport(width, height, deviceName, showFrame) {
     statusBar.appendChild(statusIcons);
 
     const homeIndicator = document.createElement('div');
-    homeIndicator.style.cssText = `position: absolute; left: 50%; bottom: ${Math.max(8, Math.round(screenHeight * 0.009))}px; transform: translateX(-50%); width: ${Math.round(screenWidth * 0.32)}px; height: 4px; background: rgba(17,17,17,0.8); border-radius: 999px;`;
+    homeIndicator.style.cssText = `position: absolute; left: 50%; bottom: ${Math.max(8, Math.round(screenHeight * 0.009))}px; transform: translateX(-50%); width: ${Math.round(screenWidth * 0.31)}px; height: 4.5px; background: rgba(255,255,255,0.92); border-radius: 999px; box-shadow: 0 1px 1px rgba(0,0,0,0.14);`;
 
     overlay.appendChild(statusBg);
     overlay.appendChild(statusBar);
@@ -262,29 +273,22 @@ function resizeViewport(width, height, deviceName, showFrame) {
     function applyTheme(baseColor) {
       const fallbackColor = baseColor || { r: 245, g: 245, b: 245, a: 1 };
       const isDark = getColorLuminance(fallbackColor) < 140;
-      const foreground = isDark ? '#ffffff' : '#000000';
-      const barBg = isDark
-        ? colorToRgba(fallbackColor, 0.88)
-        : colorToRgba(fallbackColor, 0.92);
+      const foreground = isDark ? '#ffffff' : 'rgba(0,0,0,0.94)';
+      statusBg.style.background = 'transparent';
 
-      // Update status bar background to match the page's top color
-      statusBg.style.background = `linear-gradient(180deg, ${barBg} 0%, ${colorToRgba(fallbackColor, isDark ? 0.82 : 0.88)} 100%)`;
-
-      // Update all parent containers so currentColor cascades to all children
       overlay.style.color = foreground;
       statusBar.style.color = foreground;
+      statusBar.style.textShadow = isDark ? '0 1px 2px rgba(0,0,0,0.45)' : '0 1px 1px rgba(255,255,255,0.25)';
       timeLabel.textContent = getLocalDeviceTime();
       timeLabel.style.color = foreground;
       statusIcons.style.color = foreground;
-      
-      // Explicitly update signal bars, battery border, level, and cap
       signal.style.color = foreground;
       battery.style.borderColor = foreground;
       batteryLevel.style.backgroundColor = foreground;
       batteryCap.style.backgroundColor = foreground;
-      
-      // Update home indicator to contrast with background
-      homeIndicator.style.background = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(17,17,17,0.8)';
+
+      homeIndicator.style.background = isDark ? 'rgba(255,255,255,0.92)' : 'rgba(17,17,17,0.78)';
+      homeIndicator.style.boxShadow = isDark ? '0 1px 1px rgba(0,0,0,0.28)' : '0 1px 1px rgba(255,255,255,0.18)';
     }
 
     return {
@@ -399,9 +403,11 @@ function resizeViewport(width, height, deviceName, showFrame) {
   const isMacBook = nameLower.includes('macbook');
   const hasIPhoneNotch = isIPhone && !nameLower.includes('se');
 
-  const sideBezel = isMacBook ? 16 : 4;
-  const topBezel = isMacBook ? 18 : 6;
-  const bottomBezel = isMacBook ? 30 : 6;
+  const isLandscape = width > height;
+
+  const sideBezel = isMacBook ? 16 : (isIPhone ? 7 : (isTablet ? 8 : 6));
+  const topBezel = isMacBook ? 18 : (isIPhone ? 7 : (isTablet ? 8 : 6));
+  const bottomBezel = isMacBook ? 30 : (isIPhone ? 7 : (isTablet ? 8 : 6));
   const phoneWidth = width + (sideBezel * 2);
   const phoneHeight = height + topBezel + bottomBezel;
 
@@ -410,12 +416,13 @@ function resizeViewport(width, height, deviceName, showFrame) {
   const maxWidth = isSmallScreen ? (window.innerWidth - 80) : (window.innerWidth - 380);
   const scale = Math.min(maxHeight / phoneHeight, maxWidth / phoneWidth, 1);
   const topOverlayInset = showFrame
-    ? (isAndroid ? 30 : ((isIPhone && hasIPhoneNotch) ? 36 : 0))
+    ? (isAndroid ? 30 : (isTablet ? 30 : ((isIPhone && hasIPhoneNotch && !isLandscape) ? 48 : 0)))
     : 0;
 
   const devicesList = [
     { name: 'iPhone 17 Pro', width: 402, height: 874 },
     { name: 'Samsung Galaxy S26', width: 360, height: 800 },
+    { name: 'iPad Air', width: 820, height: 1180 },
     { name: 'MacBook Air 13"', width: 1280, height: 832 },
     { name: 'MacBook Air 15"', width: 1440, height: 932 }
   ];
@@ -669,27 +676,44 @@ function resizeViewport(width, height, deviceName, showFrame) {
   const mockup = document.createElement('div');
 
   if (isIPhone) {
-    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #6f3f2d 0%, #b46e4d 22%, #f0ba93 52%, #9a5f45 78%, #573126 100%); border-radius: 38px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 1px #532d21, 0 0 0 3px #8a563f, 0 0 0 5px #d79a76, 0 50px 120px rgba(0,0,0,0.75), inset 0 1px 2px rgba(255,255,255,0.35), inset 0 -6px 12px rgba(72,35,24,0.35);`;
+    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #6e7075 0%, #242529 18%, #0b0b0d 47%, #3a3d42 82%, #9a9ea3 100%); border-radius: 54px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 0 0 2px #111214, 0 0 0 4px #45484e, 0 45px 110px rgba(0,0,0,0.72), inset 0 1px 0 rgba(255,255,255,0.34), inset 0 -10px 16px rgba(0,0,0,0.34);`;
+  } else if (isTablet) {
+    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #3a3a3c 0%, #2c2c2e 50%, #1c1c1e 100%); border-radius: 28px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 1px #1a1a1a, 0 0 0 3px #2c2c2e, 0 50px 120px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.12);`;
   } else if (isAndroid) {
-    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 24px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 1px #0a0a0a, 0 0 0 3px #1a1a1a, 0 0 0 5px #2a2a2a, 0 50px 120px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.05);`;
+    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 28px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 1px #0a0a0a, 0 0 0 3px #1a1a1a, 0 0 0 5px #2a2a2a, 0 50px 120px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.05);`;
   } else {
-    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #1f1f1f, #2d2d2d); border-radius: 38px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 6px #1a1a1a, 0 0 0 8px #333, 0 50px 120px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,255,255,0.1);`;
+    mockup.style.cssText = `position: relative; width: ${phoneWidth}px; height: ${phoneHeight}px; background: linear-gradient(145deg, #1f1f1f, #2d2d2d); border-radius: 48px; padding: ${topBezel}px ${sideBezel}px ${bottomBezel}px ${sideBezel}px; transform: scale(${scale}); box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 6px #1a1a1a, 0 0 0 8px #333, 0 50px 120px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,255,255,0.1);`;
   }
 
   if (showFrame) {
     if (isIPhone) {
-      const dynamicIsland = document.createElement('div');
-      dynamicIsland.style.cssText = 'position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 126px; height: 30px; background: linear-gradient(180deg, #151515 0%, #050505 100%); border-radius: 999px; z-index: 200; box-shadow: inset 0 1px 1px rgba(255,255,255,0.08);';
+      // Dynamic Island — positioned relative to the screen, not the mockup bezel
+      if (isLandscape) {
+        // Rotated 90deg and on the left side
+        const diLeft = sideBezel + 8;
+        const dynamicIsland = document.createElement('div');
+        dynamicIsland.style.cssText = `position: absolute; top: 50%; left: ${diLeft}px; transform: translateY(-50%); width: 34px; height: 118px; background: linear-gradient(90deg, #131314 0%, #030303 100%); border-radius: 999px; z-index: 200;`;
 
-      const islandCamera = document.createElement('div');
-      islandCamera.style.cssText = 'position: absolute; top: 10px; left: calc(50% + 40px); width: 10px; height: 10px; background: radial-gradient(circle, #203c8a 20%, #0a0a0a 65%); border-radius: 50%; z-index: 201;';
+        const islandCamera = document.createElement('div');
+        islandCamera.style.cssText = `position: absolute; top: calc(50% - 42px); left: ${diLeft + 7}px; width: 9px; height: 9px; background: radial-gradient(circle, #3157b3 12%, #121318 48%, #040404 75%); border-radius: 50%; z-index: 201; box-shadow: inset 0 0 2px rgba(255,255,255,0.15);`;
 
-      const islandSensor = document.createElement('div');
-      islandSensor.style.cssText = 'position: absolute; top: 16px; left: calc(50% - 28px); width: 40px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; z-index: 201;';
+        mockup.appendChild(dynamicIsland);
+        mockup.appendChild(islandCamera);
+      } else {
+        const diTop = topBezel + 7;
+        const dynamicIsland = document.createElement('div');
+        dynamicIsland.style.cssText = `position: absolute; top: ${diTop}px; left: 50%; transform: translateX(-50%); width: 118px; height: 30px; background: linear-gradient(180deg, #151517 0%, #050505 100%); border-radius: 999px; z-index: 200;`;
 
-      mockup.appendChild(dynamicIsland);
-      mockup.appendChild(islandCamera);
-      mockup.appendChild(islandSensor);
+        const islandCamera = document.createElement('div');
+        islandCamera.style.cssText = `position: absolute; top: ${diTop + 6}px; left: calc(50% + 36px); width: 8px; height: 8px; background: radial-gradient(circle, #3157b3 12%, #121318 48%, #040404 75%); border-radius: 50%; z-index: 201; box-shadow: inset 0 0 2px rgba(255,255,255,0.15);`;
+
+        const islandSensor = document.createElement('div');
+        islandSensor.style.cssText = `position: absolute; top: ${diTop + 13}px; left: calc(50% - 27px); width: 39px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 999px; z-index: 201;`;
+
+        mockup.appendChild(dynamicIsland);
+        mockup.appendChild(islandCamera);
+        mockup.appendChild(islandSensor);
+      }
     } else if (isMacBook) {
       const camera = document.createElement('div');
       camera.style.cssText = 'position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 4.5px; height: 4.5px; background: radial-gradient(circle, #203c8a 30%, #111 75%); border-radius: 50%; z-index: 11; box-shadow: 0 0 0 0.5px #2a2a2a;';
@@ -708,37 +732,65 @@ function resizeViewport(width, height, deviceName, showFrame) {
       mockup.appendChild(bottomBase);
     } else if (isAndroid) {
       const punchHole = document.createElement('div');
-      punchHole.style.cssText = 'position: absolute; top: 13px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: #0a0a0a; border-radius: 50%; z-index: 10;';
+      punchHole.style.cssText = `position: absolute; top: ${topBezel + 7}px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: #0a0a0a; border-radius: 50%; z-index: 200;`;
 
       const camera = document.createElement('div');
-      camera.style.cssText = 'position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: radial-gradient(circle, #1e40af 30%, #0a0a0a 70%); border-radius: 50%; z-index: 11;';
+      camera.style.cssText = `position: absolute; top: ${topBezel + 9}px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: radial-gradient(circle, #1e40af 30%, #0a0a0a 70%); border-radius: 50%; z-index: 201;`;
 
       mockup.appendChild(punchHole);
+      mockup.appendChild(camera);
+    } else if (isTablet) {
+      const camera = document.createElement('div');
+      camera.style.cssText = `position: absolute; top: ${topBezel + 8}px; left: 50%; transform: translateX(-50%); width: 7px; height: 7px; background: radial-gradient(circle, #203c8a 30%, #111 75%); border-radius: 50%; z-index: 200; box-shadow: 0 0 0 1px #2a2a2a;`;
       mockup.appendChild(camera);
     }
 
     if (!isMacBook) {
-      const powerBtn = document.createElement('div');
-    powerBtn.style.cssText = `position: absolute; right: -3px; top: 120px; width: 3px; height: 70px; background: ${isIPhone ? 'linear-gradient(90deg, #6e3f2d, #d9a07c)' : 'linear-gradient(90deg, #0a0a0a, #1a1a1a)'}; border-radius: 0 2px 2px 0;`;
+      if (isLandscape) {
+        // Reposition hardware buttons for landscape
+        const powerBtn = document.createElement('div');
+        powerBtn.style.cssText = `position: absolute; top: -3px; right: 120px; width: 70px; height: 3px; background: ${isIPhone ? 'linear-gradient(180deg, #5f636a, #0b0b0d)' : 'linear-gradient(180deg, #0a0a0a, #1a1a1a)'}; border-radius: 2px 2px 0 0;`;
 
-    const volumeUp = document.createElement('div');
-    volumeUp.style.cssText = `position: absolute; left: -3px; top: 100px; width: 3px; height: 50px; background: ${isIPhone ? 'linear-gradient(270deg, #6e3f2d, #d9a07c)' : 'linear-gradient(270deg, #0a0a0a, #1a1a1a)'}; border-radius: 2px 0 0 2px;`;
+        const volumeUp = document.createElement('div');
+        volumeUp.style.cssText = `position: absolute; bottom: -3px; right: 100px; width: 50px; height: 3px; background: ${isIPhone ? 'linear-gradient(0deg, #5f636a, #0b0b0d)' : 'linear-gradient(0deg, #0a0a0a, #1a1a1a)'}; border-radius: 0 0 2px 2px;`;
 
-    const volumeDown = document.createElement('div');
-    volumeDown.style.cssText = `position: absolute; left: -3px; top: 160px; width: 3px; height: 50px; background: ${isIPhone ? 'linear-gradient(270deg, #6e3f2d, #d9a07c)' : 'linear-gradient(270deg, #0a0a0a, #1a1a1a)'}; border-radius: 2px 0 0 2px;`;
+        const volumeDown = document.createElement('div');
+        volumeDown.style.cssText = `position: absolute; bottom: -3px; right: 160px; width: 50px; height: 3px; background: ${isIPhone ? 'linear-gradient(0deg, #5f636a, #0b0b0d)' : 'linear-gradient(0deg, #0a0a0a, #1a1a1a)'}; border-radius: 0 0 2px 2px;`;
 
-    mockup.appendChild(powerBtn);
-    mockup.appendChild(volumeUp);
-    mockup.appendChild(volumeDown);
+        mockup.appendChild(powerBtn);
+        mockup.appendChild(volumeUp);
+        mockup.appendChild(volumeDown);
+      } else {
+        const powerBtn = document.createElement('div');
+        powerBtn.style.cssText = `position: absolute; right: -3px; top: 126px; width: 3px; height: 78px; background: ${isIPhone ? 'linear-gradient(90deg, #5f636a, #0b0b0d)' : 'linear-gradient(90deg, #0a0a0a, #1a1a1a)'}; border-radius: 0 2px 2px 0;`;
+
+        const actionBtn = isIPhone ? document.createElement('div') : null;
+        if (actionBtn) {
+          actionBtn.style.cssText = 'position: absolute; left: -3px; top: 82px; width: 3px; height: 30px; background: linear-gradient(270deg, #5f636a, #0b0b0d); border-radius: 2px 0 0 2px;';
+        }
+
+        const volumeUp = document.createElement('div');
+        volumeUp.style.cssText = `position: absolute; left: -3px; top: 128px; width: 3px; height: 54px; background: ${isIPhone ? 'linear-gradient(270deg, #5f636a, #0b0b0d)' : 'linear-gradient(270deg, #0a0a0a, #1a1a1a)'}; border-radius: 2px 0 0 2px;`;
+
+        const volumeDown = document.createElement('div');
+        volumeDown.style.cssText = `position: absolute; left: -3px; top: 190px; width: 3px; height: 54px; background: ${isIPhone ? 'linear-gradient(270deg, #5f636a, #0b0b0d)' : 'linear-gradient(270deg, #0a0a0a, #1a1a1a)'}; border-radius: 2px 0 0 2px;`;
+
+        mockup.appendChild(powerBtn);
+        if (actionBtn) {
+          mockup.appendChild(actionBtn);
+        }
+        mockup.appendChild(volumeUp);
+        mockup.appendChild(volumeDown);
+      }
     }
   }
 
-  const screenRadius = isMacBook ? '8px 8px 0 0' : (isIPhone ? '30px' : (isAndroid ? '18px' : '32px'));
+  const screenRadius = isMacBook ? '8px 8px 0 0' : (isIPhone ? '42px' : (isTablet ? '20px' : (isAndroid ? '20px' : '32px')));
   const screen = document.createElement('div');
-  screen.style.cssText = `position: relative; width: ${width}px; height: ${height}px; background: white; border-radius: ${showFrame ? screenRadius : '8px'}; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.1);`;
+  screen.style.cssText = `position: relative; width: ${width}px; height: ${height}px; background: white; border-radius: ${showFrame ? screenRadius : '8px'}; overflow: hidden; box-shadow: ${isIPhone ? '0 0 0 1px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 0 24px rgba(0,0,0,0.16)' : 'inset 0 0 20px rgba(0,0,0,0.1)'};`;
 
   const iframe = document.createElement('iframe');
-  iframe.style.cssText = `position: absolute; top: ${topOverlayInset}px; left: 0; width: ${width}px; height: ${height - topOverlayInset}px; border: none; background: white; border-radius: 0 0 ${showFrame && !isMacBook ? screenRadius : '0'} ${showFrame && !isMacBook ? screenRadius : '0'}; visibility: hidden;`;
+  iframe.style.cssText = `position: absolute; top: ${topOverlayInset}px; left: 0; width: ${width}px; height: ${height - topOverlayInset}px; border: none; background: white; border-radius: 0 0 ${showFrame && !isMacBook ? screenRadius : '0'} ${showFrame && !isMacBook ? screenRadius : '0'}; visibility: hidden; scrollbar-width: none; -ms-overflow-style: none;`;
   let topOverlayControls = null;
 
   // Sync navigation state from iframe to outer window so refreshes retain correct URL
@@ -943,6 +995,11 @@ function resizeViewport(width, height, deviceName, showFrame) {
   } else if (showFrame && isIPhone && !hasIPhoneNotch) {
     // For iPhone SE or older, we still show the status bar but with a background
     topOverlayControls = createAndroidStatusOverlay(width, height); // Reuse Android's as it has a BG
+    screen.appendChild(topOverlayControls.overlay);
+  }
+
+  if (showFrame && isTablet) {
+    topOverlayControls = createAndroidStatusOverlay(width, height);
     screen.appendChild(topOverlayControls.overlay);
   }
 
