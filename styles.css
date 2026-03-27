@@ -1,10 +1,10 @@
 :root {
-  --laravel-red: #ec4899;
-  --laravel-red-deep: #be185d;
-  --laravel-red-soft: #fde7f3;
-  --laravel-red-shadow: rgba(236, 72, 153, 0.24);
-  --laravel-red-shadow-strong: rgba(236, 72, 153, 0.34);
-  --laravel-ink: #201924;
+  --accent: #ec4899;
+  --accent-deep: #be185d;
+  --accent-soft: #fde7f3;
+  --accent-shadow: rgba(236, 72, 153, 0.24);
+  --accent-shadow-strong: rgba(236, 72, 153, 0.34);
+  --accent-ink: #201924;
 }
 
 * {
@@ -104,13 +104,13 @@ select {
 }
 
 select:hover {
-  border-color: var(--laravel-red);
+  border-color: var(--accent);
   background: white;
 }
 
 select:focus {
   outline: none;
-  border-color: var(--laravel-red);
+  border-color: var(--accent);
   background: white;
   box-shadow: 0 0 0 3px rgba(255, 45, 32, 0.12);
 }
@@ -293,7 +293,7 @@ button {
 #applyBtn {
   background: linear-gradient(135deg, #a855f7 0%, #ec4899 62%, #be185d 100%);
   color: white;
-  box-shadow: 0 4px 12px var(--laravel-red-shadow-strong);
+  box-shadow: 0 4px 12px var(--accent-shadow-strong);
   font-size: 14px;
   padding: 14px 16px;
 }
@@ -309,15 +309,15 @@ button {
 
 #rotateBtn {
   background: white;
-  color: var(--laravel-red);
-  border: 2px solid var(--laravel-red);
+  color: var(--accent);
+  border: 2px solid var(--accent);
 }
 
 #rotateBtn:hover {
-  background: var(--laravel-red);
+  background: var(--accent);
   color: white;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--laravel-red-shadow);
+  box-shadow: 0 4px 12px var(--accent-shadow);
 }
 
 #resetBtn {
@@ -357,7 +357,7 @@ button {
 
 .checkbox:hover {
   background: #f3f4f6;
-  border-color: var(--laravel-red);
+  border-color: var(--accent);
 }
 
 .checkbox input[type="checkbox"] {
@@ -366,7 +366,7 @@ button {
   margin: 0;
   margin-right: 10px;
   cursor: pointer;
-  accent-color: var(--laravel-red);
+  accent-color: var(--accent);
   border-radius: 4px;
 }
 
@@ -423,11 +423,11 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--laravel-red);
+  background: var(--accent);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--laravel-red-deep);
+  background: var(--accent-deep);
 }
 
 /* Loading State */

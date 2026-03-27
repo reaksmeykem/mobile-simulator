@@ -3,7 +3,7 @@
   "name": "Mobile Simulator",
   "version": "1.0.0",
   "description": "Simulate mobile devices and test responsive designs with realistic device mockups",
-  "author": "Your Name",
+  "author": "Reaksmey Kem",
   "permissions": [
     "activeTab",
     "tabs",
